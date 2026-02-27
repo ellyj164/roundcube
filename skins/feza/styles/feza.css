@@ -10,16 +10,20 @@
   --feza-primary:        #071a2f;
   --feza-accent:         #0a4da3;
   --feza-success:        #2ec27e;
+  --feza-warning:        #f5a623;
+  --feza-danger:         #e74c3c;
   --feza-bg:             #eaf2fb;
   --feza-white:          #ffffff;
   --feza-text:           #1a1a2e;
   --feza-text-muted:     #6c757d;
   --feza-border:         #dee2e6;
   --feza-shadow:         0 2px 8px rgba(0, 0, 0, 0.08);
+  --feza-shadow-lg:      0 8px 32px rgba(0, 0, 0, 0.16);
   --feza-radius:         8px;
   --feza-sidebar-width:  240px;
   --feza-header-height:  56px;
   --feza-menu-width:     56px;
+  --feza-transition:     0.2s ease;
 }
 
 /* =============================================
@@ -50,10 +54,22 @@ a:hover {
 }
 
 /* =============================================
-   LAYOUT STRUCTURE
+   LAYOUT STRUCTURE — OVERFLOW FIX
    ============================================= */
+
+/* Prevent horizontal scrolling at root level */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 #layout {
   background-color: var(--feza-bg);
+  display: flex;
+  flex-direction: row;
+  max-width: 100%;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* Task menu (left-most icon bar) */
@@ -63,6 +79,7 @@ a:hover {
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
   width: var(--feza-menu-width);
   min-width: var(--feza-menu-width);
+  flex-shrink: 0;
 }
 
 /* Sidebar (folder list) */
@@ -72,6 +89,8 @@ a:hover {
   color: #e0eaf5;
   width: var(--feza-sidebar-width);
   min-width: var(--feza-sidebar-width);
+  flex-shrink: 0;
+  overflow-x: hidden;
 }
 
 #layout-sidebar .header {
@@ -89,10 +108,13 @@ a:hover {
   letter-spacing: 0.05em;
 }
 
-/* Message list */
+/* Message list — flex child, constrained */
 #layout-list {
   background-color: var(--feza-white);
   border-right: 1px solid var(--feza-border);
+  flex: 0 0 320px;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 #layout-list .header,
@@ -103,10 +125,29 @@ a:hover {
   line-height: var(--feza-header-height);
 }
 
-/* Content pane */
+/* Content pane — grows to fill remaining space */
 #layout-content {
   background-color: var(--feza-bg);
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-x: hidden;
 }
+
+/* Text truncation helpers applied to list cells */
+#messagelist td.subject,
+#messagelist td.from,
+#messagelist td.to {
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Subject column should take most available space */
+#messagelist col.subject { width: 40%; }
+#messagelist col.from    { width: 20%; }
+#messagelist col.date    { width: 12%; }
+#messagelist col.flags   { width: 8%;  }
 
 /* =============================================
    TASK MENU (LEFT ICON BAR)
@@ -565,8 +606,24 @@ select:focus {
 }
 
 /* =============================================
-   RESPONSIVE - MOBILE
+   RESPONSIVE ENTERPRISE GRID SYSTEM
    ============================================= */
+
+/* --- 1200px: wide desktop, list narrows --- */
+@media (max-width: 1200px) {
+  #layout-list {
+    flex: 0 0 280px;
+  }
+}
+
+/* --- 992px: tablet landscape — sidebar collapsible --- */
+@media (max-width: 992px) {
+  #layout-list {
+    flex: 0 0 240px;
+  }
+}
+
+/* --- 768px: tablet portrait — single-panel focus --- */
 @media (max-width: 768px) {
   :root {
     --feza-sidebar-width: 260px;
@@ -578,15 +635,142 @@ select:focus {
     min-width: var(--feza-menu-width);
   }
 
+  #layout-list {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
   .task-login #login-form {
     padding: 28px 24px;
   }
 }
 
+/* --- 480px: mobile portrait — stack panels --- */
 @media (max-width: 480px) {
+  :root {
+    --feza-header-height: 48px;
+  }
+
+  #layout {
+    flex-direction: column;
+  }
+
+  #layout-menu {
+    width: 100%;
+    min-width: 0;
+    height: var(--feza-header-height);
+    flex-direction: row;
+  }
+
+  #layout-sidebar {
+    width: 100%;
+    min-width: 0;
+  }
+
+  #layout-list,
+  #layout-content {
+    width: 100%;
+    min-width: 0;
+  }
+
+  #messagelist td.subject {
+    max-width: 180px;
+  }
+
   .task-login #login-form {
     padding: 24px 20px;
     border-radius: 8px;
+  }
+
+  /* Bottom action bar for mobile */
+  #feza-mobile-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    background: var(--feza-white);
+    border-top: 1px solid var(--feza-border);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 56px;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+  }
+
+  #feza-mobile-bar a,
+  #feza-mobile-bar button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.65rem;
+    color: var(--feza-text-muted);
+    background: none;
+    border: none;
+    padding: 4px 12px;
+    cursor: pointer;
+    min-width: 48px;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  #feza-mobile-bar a.active,
+  #feza-mobile-bar button.active {
+    color: var(--feza-accent);
+  }
+
+  /* Add padding so content isn't hidden behind bottom bar */
+  #layout-content {
+    padding-bottom: 56px;
+  }
+}
+
+/* =============================================
+   MOBILE TOUCH ENHANCEMENTS
+   ============================================= */
+
+/* Touch-friendly minimum tap target */
+@media (hover: none) and (pointer: coarse) {
+  .toolbar .button,
+  .toolbar a.button,
+  .toolbar .btn,
+  #mailboxlist li a,
+  #messagelist tbody tr {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Floating compose button (mobile) */
+#feza-fab {
+  display: none;
+  position: fixed;
+  bottom: 72px;
+  right: 20px;
+  z-index: 199;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--feza-accent);
+  color: var(--feza-white);
+  box-shadow: 0 4px 16px rgba(10,77,163,0.4);
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--feza-transition), transform var(--feza-transition);
+}
+
+#feza-fab:hover,
+#feza-fab:focus {
+  background-color: #083d82;
+  transform: scale(1.08);
+}
+
+@media (max-width: 768px) {
+  #feza-fab {
+    display: flex;
   }
 }
 
@@ -696,4 +880,390 @@ html.dark-mode #compose-content {
 .listing li a,
 .listing li .mailbox {
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* =============================================
+   SMART EMAIL SUGGESTIONS PANEL
+   ============================================= */
+#feza-suggestions {
+  background: linear-gradient(135deg, #eef5ff 0%, #f0fdf4 100%);
+  border: 1px solid #c7deff;
+  border-radius: var(--feza-radius);
+  padding: 10px 14px;
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  animation: feza-slide-in 0.25s ease;
+}
+
+@keyframes feza-slide-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#feza-suggestions .feza-suggestion-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+#feza-suggestions .feza-suggestion-body {
+  flex: 1;
+  min-width: 0;
+}
+
+#feza-suggestions .feza-suggestion-title {
+  font-weight: 600;
+  color: var(--feza-text);
+  margin-bottom: 4px;
+}
+
+#feza-suggestions .feza-suggestion-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.feza-quick-reply {
+  background: var(--feza-white);
+  border: 1px solid var(--feza-accent);
+  border-radius: 20px;
+  color: var(--feza-accent);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: background var(--feza-transition), color var(--feza-transition);
+  white-space: nowrap;
+}
+
+.feza-quick-reply:hover,
+.feza-quick-reply:focus {
+  background: var(--feza-accent);
+  color: var(--feza-white);
+}
+
+/* Attachment warning banner */
+#feza-attachment-warning {
+  background: #fff8e6;
+  border: 1px solid #f5a623;
+  border-left: 4px solid #f5a623;
+  border-radius: var(--feza-radius);
+  padding: 10px 14px;
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: #7a4a00;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: feza-slide-in 0.25s ease;
+}
+
+/* =============================================
+   UNDO SEND TOAST
+   ============================================= */
+#feza-undo-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9998;
+  background: var(--feza-primary);
+  color: var(--feza-white);
+  border-radius: var(--feza-radius);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--feza-shadow-lg);
+  font-size: 0.9rem;
+  animation: feza-slide-in 0.25s ease;
+}
+
+#feza-undo-toast .feza-undo-btn {
+  background: var(--feza-accent);
+  color: var(--feza-white);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background var(--feza-transition);
+}
+
+#feza-undo-toast .feza-undo-btn:hover {
+  background: #083d82;
+}
+
+#feza-undo-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--feza-accent);
+  border-radius: 0 0 var(--feza-radius) var(--feza-radius);
+  animation: feza-undo-countdown 8s linear forwards;
+}
+
+@keyframes feza-undo-countdown {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+/* =============================================
+   MESSAGE VIEW — PROFESSIONAL ENHANCEMENTS
+   ============================================= */
+
+/* Sticky action toolbar */
+#messageview .header .toolbar,
+#message-header .toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: var(--feza-white);
+  border-bottom: 1px solid var(--feza-border);
+}
+
+/* Hover quick-actions on message list rows */
+#messagelist tbody tr .feza-row-actions {
+  display: none;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  gap: 4px;
+  align-items: center;
+  background: var(--feza-white);
+  border: 1px solid var(--feza-border);
+  border-radius: 20px;
+  padding: 2px 8px;
+  box-shadow: var(--feza-shadow);
+}
+
+#messagelist tbody tr:hover .feza-row-actions {
+  display: flex;
+}
+
+#messagelist tbody tr {
+  position: relative;
+}
+
+.feza-row-action-btn {
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--feza-text-muted);
+  border-radius: 4px;
+  transition: color var(--feza-transition), background var(--feza-transition);
+}
+
+.feza-row-action-btn:hover {
+  color: var(--feza-accent);
+  background: #eef3fb;
+}
+
+/* Expand/collapse long messages */
+.feza-message-collapsed {
+  max-height: 320px;
+  overflow: hidden;
+  position: relative;
+}
+
+.feza-message-collapsed::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: linear-gradient(transparent, var(--feza-white));
+  pointer-events: none;
+}
+
+.feza-expand-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: none;
+  border: 1px solid var(--feza-border);
+  border-radius: 20px;
+  padding: 6px;
+  color: var(--feza-accent);
+  font-size: 0.82rem;
+  cursor: pointer;
+  margin: 8px 0;
+  transition: background var(--feza-transition);
+}
+
+.feza-expand-btn:hover {
+  background: #eef3fb;
+}
+
+/* =============================================
+   SEARCH FILTER CHIPS
+   ============================================= */
+#feza-search-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--feza-border);
+  background: var(--feza-white);
+}
+
+.feza-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #eef3fb;
+  border: 1px solid #c7deff;
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--feza-accent);
+  cursor: pointer;
+  transition: background var(--feza-transition), color var(--feza-transition);
+  white-space: nowrap;
+}
+
+.feza-chip:hover,
+.feza-chip.active {
+  background: var(--feza-accent);
+  color: var(--feza-white);
+  border-color: var(--feza-accent);
+}
+
+/* Highlighted search matches */
+.feza-highlight {
+  background: #fff3cd;
+  border-radius: 2px;
+  padding: 0 2px;
+  font-weight: 600;
+}
+
+/* =============================================
+   PRIORITY INDICATOR
+   ============================================= */
+.feza-priority {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.feza-priority-high   { background: var(--feza-danger); }
+.feza-priority-medium { background: var(--feza-warning); }
+.feza-priority-low    { background: var(--feza-success); }
+
+/* =============================================
+   EMAIL SNOOZE PICKER
+   ============================================= */
+#feza-snooze-popup {
+  position: absolute;
+  z-index: 500;
+  background: var(--feza-white);
+  border: 1px solid var(--feza-border);
+  border-radius: var(--feza-radius);
+  box-shadow: var(--feza-shadow-lg);
+  padding: 8px 0;
+  min-width: 200px;
+  animation: feza-slide-in 0.15s ease;
+}
+
+#feza-snooze-popup button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  color: var(--feza-text);
+  cursor: pointer;
+  transition: background var(--feza-transition);
+}
+
+#feza-snooze-popup button:hover {
+  background: #f0f7ff;
+}
+
+/* =============================================
+   INLINE QUICK REPLY BOX
+   ============================================= */
+#feza-quick-reply {
+  background: var(--feza-white);
+  border: 1px solid var(--feza-border);
+  border-radius: var(--feza-radius);
+  padding: 12px 16px;
+  margin: 12px;
+  box-shadow: var(--feza-shadow);
+}
+
+#feza-quick-reply textarea {
+  width: 100%;
+  border: none;
+  resize: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--feza-text);
+  outline: none;
+  min-height: 60px;
+}
+
+#feza-quick-reply .feza-qr-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--feza-border);
+}
+
+/* =============================================
+   DARK MODE — EXTENDED
+   ============================================= */
+html.dark-mode #feza-suggestions {
+  background: linear-gradient(135deg, #1a2e45 0%, #1a2e36 100%);
+  border-color: #2a3a5a;
+}
+
+html.dark-mode .feza-quick-reply {
+  background: #1a2535;
+  border-color: #2a4a8a;
+  color: #7ab3ff;
+}
+
+html.dark-mode .feza-quick-reply:hover,
+html.dark-mode .feza-quick-reply:focus {
+  background: var(--feza-accent);
+  color: var(--feza-white);
+}
+
+html.dark-mode #feza-search-chips {
+  background: #1a2535;
+  border-bottom-color: var(--feza-border);
+}
+
+html.dark-mode .feza-chip {
+  background: #1a2e45;
+  border-color: #2a3a5a;
+  color: #7ab3ff;
+}
+
+html.dark-mode #feza-snooze-popup,
+html.dark-mode #feza-quick-reply {
+  background: #1a2535;
+  border-color: var(--feza-border);
+  color: var(--feza-text);
 }
