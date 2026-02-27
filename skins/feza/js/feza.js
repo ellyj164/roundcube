@@ -61,7 +61,10 @@
      * Get 1-2 character initials from a name or email address
      */
     getInitials: function (name) {
-      name = name.replace(/<.*?>/, '').trim();
+      // Strip HTML tags safely via DOM text extraction
+      var tmp = document.createElement('span');
+      tmp.textContent = name;
+      name = tmp.textContent.trim();
       if (!name || name === '?') return '?';
       // Handle email addresses
       if (name.indexOf('@') !== -1) {
@@ -186,6 +189,8 @@
 
     /**
      * Show a simple keyboard shortcuts overlay
+     * NOTE: the shortcuts array below is entirely hardcoded – no user or
+     * external data flows into the HTML, so innerHTML is safe here.
      */
     showShortcutsOverlay: function () {
       if (document.getElementById('feza-shortcuts-overlay')) return;
