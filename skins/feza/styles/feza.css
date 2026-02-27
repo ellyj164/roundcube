@@ -1375,3 +1375,459 @@ html.dark-mode #feza-quick-reply {
   border-color: var(--feza-border);
   color: var(--feza-text);
 }
+
+/* =============================================
+   SUBJECT-FIRST PROFESSIONAL LAYOUT
+   ============================================= */
+
+/* Subject: primary weight, clearly dominant */
+#messagelist td.subject {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--feza-text);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Sender & date: secondary, muted */
+#messagelist td.from,
+#messagelist td.date {
+  font-size: 12px;
+  color: var(--feza-text-muted);
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Hide size and extra flag columns visually (Prompt 7) */
+#messagelist td.size,
+#messagelist th.size,
+#messagelist col.size {
+  visibility: hidden;
+  width: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden;
+  max-width: 0;
+}
+
+/* =============================================
+   RESPONSIVE MESSAGE LIST — FIXED TABLE LAYOUT
+   ============================================= */
+
+#messagelist {
+  table-layout: fixed;
+  width: 100%;
+  background-color: var(--feza-white);
+  overflow-x: hidden;
+  z-index: 10;
+  position: relative;
+}
+
+/* Column widths: subject gets the lion's share */
+#messagelist col.subject { width: 55%; }
+#messagelist col.from    { width: 22%; }
+#messagelist col.date    { width: 15%; }
+#messagelist col.flags   { width: 8%;  }
+
+/* Tablet: compress columns */
+@media (max-width: 992px) {
+  #messagelist col.subject { width: 60%; }
+  #messagelist col.from    { width: 25%; }
+  #messagelist col.date    { width: 15%; }
+}
+
+/* Mobile: subject takes full row, metadata below */
+@media (max-width: 600px) {
+  #messagelist col.subject { width: 75%; }
+  #messagelist col.from    { width: 0; }
+  #messagelist col.date    { width: 25%; }
+
+  #messagelist td.from {
+    display: none;
+  }
+
+  #messagelist td.subject {
+    max-width: 100%;
+  }
+}
+
+/* =============================================
+   SETTINGS NAVIGATION — ALWAYS VISIBLE
+   ============================================= */
+
+/* Ensure no custom CSS accidentally hides settings task link */
+#taskmenu a.settings,
+#taskmenu .button.settings,
+#taskmenu a[href*="_task=settings"],
+.feza-settings-link {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Settings panels must not be hidden */
+.task-settings #layout-content,
+.task-settings #mainscreencontent,
+.task-settings .formcontainer,
+.task-settings iframe,
+.task-settings .rcube-frame,
+.task-settings #preferences-details,
+.task-settings #identities-table,
+.task-settings #responses-table,
+.task-settings #folders-table {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+}
+
+/* =============================================
+   SETTINGS PANELS — RESTORE VISIBILITY
+   ============================================= */
+
+/* Settings task: main workspace must be visible */
+.task-settings #layout-content {
+  display: flex !important;
+  flex-direction: row !important;
+  flex: 1 1 0 !important;
+  overflow: visible !important;
+  min-height: 0 !important;
+}
+
+/* Settings list sidebar (left) */
+.task-settings #layout-sidebar,
+.task-settings #settings-sections {
+  display: block !important;
+  visibility: visible !important;
+  overflow: auto !important;
+}
+
+/* Settings frame (right content area) */
+.task-settings #preferences-details,
+.task-settings #settings-right,
+.task-settings .propform,
+.task-settings .settingslist,
+.task-settings table.records-table {
+  display: block !important;
+  visibility: visible !important;
+  overflow: auto !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* iFrames used by settings pages */
+.task-settings iframe {
+  display: block !important;
+  width: 100% !important;
+  min-height: 400px;
+  border: 0;
+}
+
+/* =============================================
+   FEZA ENTERPRISE HOME DASHBOARD
+   ============================================= */
+#feza-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px 36px;
+  background: var(--feza-bg);
+  min-height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.feza-dash-header {
+  border-bottom: 1px solid var(--feza-border);
+  padding-bottom: 16px;
+}
+
+.feza-dash-greeting {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--feza-text);
+}
+
+.feza-dash-email {
+  font-size: 0.875rem;
+  color: var(--feza-text-muted);
+  margin-top: 4px;
+}
+
+/* Dashboard cards row */
+.feza-dash-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.feza-dash-card {
+  background: var(--feza-white);
+  border: 1px solid var(--feza-border);
+  border-radius: var(--feza-radius);
+  box-shadow: var(--feza-shadow);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  flex: 1 1 180px;
+  min-width: 160px;
+  transition: box-shadow var(--feza-transition), transform var(--feza-transition);
+}
+
+.feza-dash-card:hover {
+  box-shadow: var(--feza-shadow-lg);
+  transform: translateY(-2px);
+}
+
+.feza-dash-card-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.feza-dash-card-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--feza-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.feza-dash-card-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--feza-text);
+  margin-top: 2px;
+}
+
+/* Recent messages section */
+.feza-dash-recent {
+  background: var(--feza-white);
+  border: 1px solid var(--feza-border);
+  border-radius: var(--feza-radius);
+  box-shadow: var(--feza-shadow);
+  padding: 16px 20px;
+}
+
+.feza-dash-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--feza-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+.feza-dash-recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.feza-dash-recent-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--feza-border);
+  transition: background var(--feza-transition);
+  border-radius: 4px;
+}
+
+.feza-dash-recent-item:last-child {
+  border-bottom: 0;
+}
+
+.feza-dash-recent-item:hover {
+  background: #f0f7ff;
+  padding-left: 6px;
+}
+
+.feza-dash-recent-subject {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--feza-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feza-dash-recent-unread .feza-dash-recent-subject {
+  font-weight: 700;
+}
+
+.feza-dash-recent-meta {
+  font-size: 0.75rem;
+  color: var(--feza-text-muted);
+  margin-top: 2px;
+}
+
+.feza-dash-recent-empty {
+  color: var(--feza-text-muted);
+  font-size: 0.875rem;
+  padding: 12px 0;
+}
+
+/* Responsive dashboard */
+@media (max-width: 600px) {
+  #feza-dashboard {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .feza-dash-cards {
+    flex-direction: column;
+  }
+
+  .feza-dash-card {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+/* Dark mode */
+html.dark-mode #feza-dashboard {
+  background: var(--feza-bg);
+}
+
+html.dark-mode .feza-dash-card,
+html.dark-mode .feza-dash-recent {
+  background: var(--feza-white);
+  border-color: var(--feza-border);
+}
+
+html.dark-mode .feza-dash-recent-item:hover {
+  background: #1e3048;
+}
+
+/* =============================================
+   EMAIL READING HIERARCHY — TITLE CLARITY
+   ============================================= */
+
+/* 1. Subject — highest prominence */
+#messagelist td.subject span.subject,
+#messagelist td.subject {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--feza-text) !important;
+  line-height: 1.4;
+}
+
+/* 2. Unread subject gets stronger weight */
+#messagelist tr.unread td.subject span.subject,
+#messagelist tr.unread td.subject {
+  font-weight: 700 !important;
+}
+
+/* 3. Sender — secondary, explicitly smaller */
+#messagelist td.from,
+#messagelist td.from span {
+  font-size: 11px !important;
+  color: var(--feza-text-muted) !important;
+  font-weight: 400 !important;
+}
+
+/* 4. Date — smallest, rightmost */
+#messagelist td.date,
+#messagelist td.date span {
+  font-size: 11px !important;
+  color: var(--feza-text-muted) !important;
+  font-weight: 400 !important;
+  text-align: right;
+}
+
+/* =============================================
+   SAFE COLUMN VISIBILITY — DOM PRESERVED
+   ============================================= */
+
+/* Hide 'size' column visually; DOM element stays */
+#messagelist td.size,
+#messagelist th.size,
+#messagelist col.size,
+#messagelist colgroup col.size {
+  visibility: hidden;
+  width: 0 !important;
+  max-width: 0 !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+/* Optionally hide 'threads' count column on small screens */
+@media (max-width: 768px) {
+  #messagelist td.threads,
+  #messagelist th.threads,
+  #messagelist col.threads {
+    visibility: hidden;
+    width: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+}
+
+/* =============================================
+   MOBILE ENTERPRISE UX — TOUCH OPTIMIZED
+   ============================================= */
+
+/* Adaptive row height for touch */
+@media (max-width: 768px) {
+  #messagelist tbody tr {
+    min-height: 56px;
+    height: auto;
+  }
+
+  #messagelist tbody td {
+    padding: 10px 8px !important;
+    vertical-align: middle;
+  }
+
+  /* Subject is always the headline on mobile */
+  #messagelist td.subject {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    max-width: 100%;
+    display: table-cell;
+  }
+
+  /* Muted sender below subject (using flex column trick) */
+  #messagelist td.from {
+    font-size: 11px;
+    color: var(--feza-text-muted);
+  }
+
+  /* Collapsible sidebar: hides on mobile until toggled */
+  #layout-sidebar.feza-collapsed {
+    width: 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden;
+    transition: width 0.25s ease, visibility 0.25s ease;
+  }
+
+  #layout-sidebar:not(.feza-collapsed) {
+    width: var(--feza-sidebar-width) !important;
+    min-width: var(--feza-sidebar-width) !important;
+    visibility: visible;
+  }
+}
+
+/* Touch-friendly mailbox list items */
+@media (hover: none) and (pointer: coarse) {
+  #mailboxlist li a,
+  #mailboxlist li .mailbox {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+
+  #messagelist tbody tr {
+    min-height: 52px;
+  }
+}
