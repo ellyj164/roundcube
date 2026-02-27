@@ -63,7 +63,7 @@ $config['plugins'] = [
 ];
 
 // skin name: folder from skins/
-$config['skin'] = 'elastic';
+$config['skin'] = 'feza';
 
 //maximum upload size
 $config['max_upload_size'] = 50 * 1024 * 1024; // 50MB upload limit

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 48">
+  <rect width="220" height="48" rx="4" fill="#071a2f"/>
+  <text x="12" y="20" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700" fill="#ffffff" letter-spacing="2">FEZA LOGISTICS</text>
+  <text x="12" y="38" font-family="'Segoe UI',Arial,sans-serif" font-size="11" font-weight="400" fill="#0a4da3" letter-spacing="1">ENTERPRISE MAIL</text>
+  <rect x="180" y="10" width="28" height="28" rx="4" fill="#0a4da3"/>
+  <text x="194" y="29" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">F</text>
+</svg>
