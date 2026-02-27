@@ -128,9 +128,28 @@ html, body {
 /* Content pane — grows to fill remaining space */
 #layout-content {
   background-color: var(--feza-bg);
+  display: flex;
   flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
   min-width: 0;
   overflow-x: hidden;
+}
+
+/* Preview pane iframe wrapper — fills all available vertical space */
+#layout-content .iframe-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
+  width: 100%;
+}
+
+#messagecontframe {
+  border: 0;
+  display: block;
+  height: 100%;
+  width: 100%;
 }
 
 /* Text truncation helpers applied to list cells */
@@ -850,6 +869,60 @@ html.dark-mode #compose-content {
 
 .ui-notification.success {
   border-left-color: var(--feza-success) !important;
+}
+
+/* =============================================
+   EMPTY STATE (no messages in folder)
+   ============================================= */
+.feza-empty-state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  width: 100%;
+}
+
+.feza-empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  opacity: 0.45;
+}
+
+.feza-empty-title {
+  color: var(--feza-text);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.feza-empty-subtitle {
+  color: var(--feza-text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 24px;
+  max-width: 280px;
+}
+
+.feza-empty-compose-btn {
+  background-color: var(--feza-accent);
+  border: none;
+  border-radius: 6px;
+  color: var(--feza-white);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  transition: background-color var(--feza-transition);
+}
+
+.feza-empty-compose-btn:hover,
+.feza-empty-compose-btn:focus {
+  background-color: #083d82;
+}
+
+html.dark-mode .feza-empty-title {
+  color: var(--feza-text);
 }
 
 /* =============================================

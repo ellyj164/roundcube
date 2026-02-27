@@ -5,6 +5,11 @@
 (function () {
   'use strict';
 
+  /* Timing constants used in interaction guards */
+  var ROW_CLICK_TIMEOUT      = 300; // ms — window after row click during which compose is blocked
+  var RCMAIL_POLL_INTERVAL   = 100; // ms — how often to poll for rcmail availability
+  var MAX_RCMAIL_POLL_ATTEMPTS = 50; // give up after 5 s (50 × 100 ms)
+
   // Run after DOM is ready
   document.addEventListener('DOMContentLoaded', function () {
     FEZA.init();
@@ -16,6 +21,9 @@
      * Initialize all FEZA UI enhancements
      */
     init: function () {
+      this.initMessageClickHandlers();
+      this.initPreventAutoCompose();
+      this.initEmptyState();
       this.initSenderAvatars();
       this.initSidebarCollapse();
       this.initSearchPlaceholder();
@@ -31,6 +39,166 @@
       this.initExpandLongMessages();
       this.initPriorityIndicators();
       this.initSwipeGestures();
+    },
+
+    /**
+     * Restore correct single-click / double-click message interactions.
+     * - Single click: native Roundcube preview (no override needed).
+     * - Double click: open the full message view via rcmail.command('open').
+     * We use event delegation on tbody so new rows are handled automatically.
+     * stopPropagation is NOT used, preserving native rcube_list click handling.
+     */
+    initMessageClickHandlers: function () {
+      var list = document.getElementById('messagelist');
+      if (!list) return;
+
+      var tbody = list.querySelector('tbody');
+      if (!tbody) return;
+
+      tbody.addEventListener('dblclick', function (e) {
+        var row = e.target.closest('tr[id]');
+        if (!row) return;
+        if (window.rcmail && typeof rcmail.command === 'function') {
+          rcmail.command('open', '', row);
+        }
+      });
+    },
+
+    /**
+     * Guard against accidental compose triggers from message row interactions.
+     * Compose should only fire when the user explicitly clicks a compose/reply/
+     * forward button — never as a side-effect of selecting a message row.
+     *
+     * Implementation: marks known compose-intent elements with a data attribute.
+     * Any compose invocation whose source element lacks that marker and originates
+     * from within the message list tbody is suppressed.
+     */
+    initPreventAutoCompose: function () {
+      if (document.body.classList.contains('action-compose')) return;
+
+      /* Tag legitimate compose/reply/forward triggers */
+      var safeTriggers = document.querySelectorAll(
+        '#taskmenu .compose, .toolbar .compose, .toolbar .reply, .toolbar .forward,' +
+        '[data-command="compose"], [data-command="reply"], [data-command="forward"]'
+      );
+      safeTriggers.forEach(function (el) {
+        el.dataset.fezaComposeOk = '1';
+      });
+
+      var list = document.getElementById('messagelist');
+      if (!list) return;
+
+      /* Capture-phase listener: if a click lands on a row and then immediately
+         causes a compose command without going through a safe trigger, suppress it. */
+      list.addEventListener('click', function (e) {
+        var row = e.target.closest('tbody tr[id]');
+        if (!row) return;
+        /* Record that the next compose-like action originated from a row click */
+        FEZA._rowClickPending = true;
+        setTimeout(function () { FEZA._rowClickPending = false; }, ROW_CLICK_TIMEOUT);
+      }, true);
+
+      /* Once rcmail is ready, wrap compose to enforce the guard */
+      FEZA._installComposeGuard();
+    },
+
+    /** @private — installs the rcmail.command compose guard when rcmail is ready */
+    _installComposeGuard: function () {
+      if (window.rcmail) {
+        FEZA._applyComposeGuard();
+      } else {
+        /* rcmail is set up after DOMContentLoaded; poll briefly */
+        var attempts = 0;
+        var timer = setInterval(function () {
+          if (window.rcmail) {
+            clearInterval(timer);
+            FEZA._applyComposeGuard();
+          } else if (++attempts > MAX_RCMAIL_POLL_ATTEMPTS) {
+            clearInterval(timer);
+          }
+        }, RCMAIL_POLL_INTERVAL);
+      }
+    },
+
+    /** @private — wraps rcmail.command to block accidental compose calls */
+    _applyComposeGuard: function () {
+      if (!window.rcmail || FEZA._composeGuardInstalled) return;
+      FEZA._composeGuardInstalled = true;
+
+      var origCommand = rcmail.command.bind(rcmail);
+      rcmail.command = function (cmd, prop, obj, ev) {
+        if (cmd === 'compose' && FEZA._rowClickPending) {
+          /* Only block if the call did not come from a safe compose trigger */
+          var fromSafe = obj && typeof obj.closest === 'function' &&
+            (obj.closest('[data-feza-compose-ok]') ||
+             obj.closest('#taskmenu') ||
+             obj.closest('.toolbar'));
+          if (!fromSafe) {
+            FEZA._rowClickPending = false;
+            return false;
+          }
+        }
+        return origCommand(cmd, prop, obj, ev);
+      };
+    },
+
+    /**
+     * Inject a polished empty-state card into the message list container
+     * whenever the messagelist tbody contains no data rows.
+     * Removed automatically when messages appear.
+     */
+    initEmptyState: function () {
+      var container = document.getElementById('messagelist-content');
+      if (!container) return;
+
+      function update() {
+        var list = document.getElementById('messagelist');
+        var existing = container.querySelector('.feza-empty-state');
+        var hasMessages = list && list.querySelector('tbody tr[id]');
+
+        if (!hasMessages) {
+          if (!existing) {
+            var empty = document.createElement('div');
+            empty.className = 'feza-empty-state';
+
+            var icon = document.createElement('div');
+            icon.className = 'feza-empty-icon';
+            icon.setAttribute('aria-hidden', 'true');
+            icon.textContent = '📭';
+
+            var title = document.createElement('div');
+            title.className = 'feza-empty-title';
+            title.textContent = 'No messages in this folder';
+
+            var sub = document.createElement('div');
+            sub.className = 'feza-empty-subtitle';
+            sub.textContent = 'This folder is empty. Compose a new message to get started.';
+
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'feza-empty-compose-btn';
+            btn.textContent = '✏ Compose Message';
+            btn.addEventListener('click', function () {
+              if (window.rcmail && typeof rcmail.command === 'function') {
+                rcmail.command('compose', '', btn);
+              }
+            });
+
+            empty.appendChild(icon);
+            empty.appendChild(title);
+            empty.appendChild(sub);
+            empty.appendChild(btn);
+            container.appendChild(empty);
+          }
+        } else {
+          if (existing) existing.parentNode.removeChild(existing);
+        }
+      }
+
+      var observer = new MutationObserver(update);
+      observer.observe(container, { childList: true, subtree: true });
+      /* Run once immediately in case the list is already rendered */
+      update();
     },
 
     /**
