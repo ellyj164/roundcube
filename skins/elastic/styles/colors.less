@@ -1,0 +1,308 @@
+/**
+ * Roundcube Webmail styles for the Elastic skin
+ *
+ * Copyright (c) The Roundcube Dev Team
+ *
+ * The contents are subject to the Creative Commons Attribution-ShareAlike
+ * License. It is allowed to copy, distribute, transmit and to adapt the work
+ * by keeping credits to the original authors in the README.md file.
+ * See http://creativecommons.org/licenses/by-sa/3.0/ for details.
+ */
+
+@color-main:                #d93025;  // Gmail red for primary actions
+@color-main-dark:           #c5221f;  // Darker Gmail red
+@color-black:               #202124;  // Gmail dark text
+@color-font:                #202124;  // Gmail primary text color
+@color-link:                #1a73e8;  // Gmail blue for links
+@color-link-hover:          #174ea6;  // Darker Gmail blue on hover
+@color-border:              #e0e0e0;  // Subtle Gmail borders
+@color-error:               #d93025;  // Gmail red for errors
+@color-success:             #1e8e3e;  // Gmail green for success
+@color-warning:             #f9ab00;  // Gmail yellow for warnings
+
+@color-black-shade-text:    #5f6368;  // Gmail secondary text
+@color-black-shade-border:  #e0e0e0;  // Gmail subtle borders
+@color-black-shade-bg:      #f8f9fa;  // Gmail light background
+
+
+// Layout elements - Gmail style
+@color-layout-border:               #e0e0e0;  // Subtle Gmail borders
+@color-layout-header:               @color-font;
+@color-layout-sidebar-background:   #f6f8fc;  // Gmail sidebar gray-blue
+@color-layout-list-background:      #ffffff;  // Clean white
+@color-layout-content-background:   #ffffff;  // Clean white
+@color-layout-header-background:    #ffffff;  // Gmail clean header
+@color-layout-footer-background:    #f6f8fc;  // Match sidebar
+
+@color-layout-mobile-header-background: @color-layout-header-background;
+@color-layout-mobile-footer-background: @color-layout-header-background;
+
+// Task menu - Gmail style left icon bar
+@color-taskmenu-background:                     #f6f8fc;  // Match sidebar background
+@color-taskmenu-button:                         #5f6368;  // Gmail icon gray
+@color-taskmenu-button-selected:                #202124;  // Darker when selected
+@color-taskmenu-button-action:                  #d93025;  // Gmail red for compose
+
+@color-taskmenu-button-selected-background:     #e8eaed;  // Gmail selected gray
+@color-taskmenu-button-action-background:       transparent;
+
+@color-taskmenu-button-hover:                   #202124;  // Darker on hover
+@color-taskmenu-button-selected-hover:          #202124;
+@color-taskmenu-button-action-hover:            #c5221f;  // Darker red on hover
+
+@color-taskmenu-button-background-hover:        #e8eaed;  // Gmail hover gray
+@color-taskmenu-button-action-background-hover: @color-taskmenu-button-background-hover;
+@color-taskmenu-button-logout:                  #d93025;  // Gmail red
+@color-taskmenu-button-logout-hover:            #c5221f;  // Darker red
+
+
+// Toolbar - Gmail style
+@color-toolbar-button:                  #5f6368;  // Gmail icon color
+@color-toolbar-button-background-hover: #f1f3f4;  // Gmail hover state
+
+@color-searchbar-background:            #f1f3f4;  // Gmail search background
+
+// Toolbar menu - Gmail style
+@color-menu-hover:               #202124;
+@color-menu-hover-background:    #e8f0fe;  // Gmail blue tint
+
+
+// Listings - Gmail message list style
+@color-list:                        #202124;  // Gmail text
+@color-list-selected:               #202124;  // Keep text dark
+@color-list-selected-background:    #e8f0fe;  // Gmail selected blue tint
+@color-list-flagged:                #f9ab00;  // Gmail yellow star
+@color-list-deleted:                fadeout(#5f6368, 30%);
+@color-list-secondary:              #5f6368;  // Gmail secondary text
+@color-list-droptarget-background:  #e8f0fe;
+@color-list-focus-indicator:        #1a73e8;  // Gmail blue
+
+@color-list-border:                 #f0f0f0;  // Very subtle borders
+@color-list-badge:                  #ffffff;
+@color-list-badge-background:       #d93025;  // Gmail red badge
+@color-list-recent:                 #1a73e8;  // Gmail blue
+@color-list-recent-badge:           #ffffff;
+@color-list-recent-badge-background: #1a73e8;  // Gmail blue badge
+
+@color-list-pagenav:                #5f6368;  // Gmail secondary
+@color-list-icon:                   #5f6368;  // Gmail icon gray
+@color-list-unread-status:          #1a73e8;  // Gmail blue for unread indicator
+
+@color-attachmentlist-border:       #f8f9fa;
+@color-attachmentlist-background:   #f8f9fa;
+
+// Drag-n-drop layer
+@color-drag-layer:                  #fff;
+@color-drag-layer-background:       @color-taskmenu-background;
+@color-drag-layer-shadow:           @color-black-shade-bg;
+
+
+// Messages - Gmail style
+@color-message:                     #202124;
+@color-message-border:              transparent;
+@color-message-background:          fadeout(#1a73e8, 93);
+@color-message-text:                #ffffff;
+@color-message-link:                #1a73e8;
+@color-message-link-font-weight:    normal;
+@color-message-information:         #1a73e8;  // Gmail blue
+@color-message-success:             #1e8e3e;  // Gmail green
+@color-message-warning:             #f9ab00;  // Gmail yellow
+@color-message-error:               #d93025;  // Gmail red
+@color-message-loading:             #5f6368;
+@color-message-information-text:    @color-message-text;
+@color-message-success-text:        @color-message-text;
+@color-message-warning-text:        @color-message;
+@color-message-error-text:          @color-message-text;
+@color-message-loading-text:        @color-message-text;
+@color-message-error-box:           @color-message;
+@color-message-information-box:     @color-message;
+@color-message-success-box:         @color-message;
+@color-message-warning-box:         @color-message;
+@color-message-error-box-background:        fadeout(@color-message-error, 80%);
+@color-message-information-box-background:  fadeout(@color-message-information, 80%);
+@color-message-success-box-background:      fadeout(@color-message-success, 80%);
+@color-message-warning-box-background:      fadeout(@color-message-warning, 80%);
+
+
+// Popovers (menus)
+@color-popover-shadow:              @color-black-shade-bg;
+@color-popover-separator:           @color-black-shade-text;
+@color-popover-separator-background: @color-black-shade-bg;
+@color-popover-mobile-header:               #fff;
+@color-popover-mobile-header-background:    @color-main-dark;
+@color-popover-mobile-dropbutton-background: #f6f6f6;
+
+// Dialogs
+@color-dialog-overlay-background:   fade(@color-font, 50%);
+@color-dialog-header:               @color-layout-header;
+@color-dialog-header-border:        @color-border;
+
+
+@color-spinner-circle:              @color-black-shade-bg;
+@color-spinner-item:                @color-black-shade-text;
+
+
+// Forms - Gmail style
+@color-input:                       @color-font;
+@color-input-border:                #dadce0;  // Gmail input border
+@color-input-border-focus:          #1a73e8;  // Gmail blue focus
+@color-input-border-focus-shadow:   fadeout(#1a73e8, 75);
+@color-input-border-invalid:        #d93025;  // Gmail red
+@color-input-border-invalid-shadow: fadeout(#d93025, 75);
+@color-input-addon-background:      #f8f9fa;
+@color-recipient-input-border:      #dadce0;
+@color-recipient-input-background:  #f8f9fa;
+@color-input-placeholder:           #80868b;  // Gmail placeholder gray
+
+@color-checkbox:                    #1a73e8;  // Gmail blue
+@color-checkbox-checked:            #1a73e8;
+@color-checkbox-checked-disabled:   lighten(#1a73e8, 15%);
+@color-checkbox-focus:              #1a73e8;
+@color-checkbox-focus-shadow:       fadeout(#1a73e8, 75);
+
+@color-form-hint:                   #5f6368;  // Gmail secondary
+
+@color-image-upload-background:     #f8f9fa;
+
+@color-btn-secondary:               #202124;  // Gmail dark text
+@color-btn-secondary-background:    #ffffff;  // White background
+@color-btn-primary:                 #ffffff;
+@color-btn-primary-background:      #1a73e8;  // Gmail blue for primary buttons
+@color-btn-danger:                  #ffffff;
+@color-btn-danger-background:       #d93025;  // Gmail red
+
+@color-quota-background:            #ffffff;
+@color-quota-text:                  #5f6368;
+@color-quota-value:                 #1a73e8;
+@color-quota-value-warning:         #d93025;
+
+@color-blockquote-background:       fadeout(#f8f9fa, 50%);
+@color-blockquote-0:                darken(#1a73e8, 20%);
+@color-blockquote-1:                darken(#1e8e3e, 15%);
+@color-blockquote-2:                darken(#d93025, 10%);
+@color-blockquote-0-border:         @color-blockquote-0;
+@color-blockquote-1-border:         @color-blockquote-1;
+@color-blockquote-2-border:         @color-blockquote-2;
+
+@color-mail-signature:              #5f6368;  // Gmail secondary
+@color-mail-headers:                #5f6368;  // Gmail secondary
+
+@color-messagepart-border:          #f8f9fa;
+@color-messagepart-background:      #f8f9fa;
+
+@color-spellcheck-link:             #d93025;  // Gmail red
+
+@color-table-border:                #e0e0e0;
+@color-table-selected:              #202124;
+@color-table-selected-background:   #e8f0fe;  // Gmail blue tint
+
+
+// Datepicker - Gmail style
+@color-datepicker-border:               #e0e0e0;
+@color-datepicker-font:                 #202124;
+@color-datepicker-highlight:            #1a73e8;
+@color-datepicker-highlight-background: lighten(#1a73e8, 40%);
+@color-datepicker-active:               #ffffff;
+@color-datepicker-active-background:    #1a73e8;
+
+
+// HTML editor
+@color-editor-disabled-mask:            fadeout(#f8f9fa, 10);
+
+
+// Gmail Compose Window colors
+@color-compose-header-bg:               #f2f6fc;  // Light header variant
+@color-compose-header-dark-bg:          #404040;  // Dark header variant
+@color-compose-body-bg:                 #ffffff;
+@color-compose-border:                  #e0e0e0;
+@color-compose-text:                    #202124;
+@color-compose-text-secondary:          #5f6368;
+@color-compose-send-btn:                #0b57d0;  // Gmail blue send button
+@color-compose-send-btn-hover:          #1a5dc8;
+@color-compose-send-btn-disabled-opacity: 50%;  // Disabled button opacity
+@color-compose-toolbar-bg:              #ffffff;
+@color-compose-toolbar-hover:           #f1f3f4;
+@color-compose-icon-color:              #5f6368;
+@color-compose-window-shadow:           0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.2);  // Material Design shadow
+
+
+// Image tools
+@color-image-tools:                     #ffffff;
+@color-image-tools-background:          fadeout(#1a73e8, 60%);
+@color-image-tools-hover:               fadeout(#1a73e8, 50%);
+
+
+// Scrollbars
+@color-scrollbar-thumb:     #c1c1c1;
+@color-scrollbar-track:     #f1f1f1;
+
+
+// Gmail shadows (using RGBA for proper transparency)
+@color-gmail-shadow-light:   rgba(60,64,67,0.302);  // Light shadow for subtle elevation
+@color-gmail-shadow-medium:  rgba(60,64,67,0.149);  // Medium shadow for depth
+@color-gmail-header-shadow:  rgba(100,121,143,0.122);  // Header inner shadow
+
+
+// Toast/Snackbar colors (Gmail-style)
+@color-toast-background:     #323232;  // Dark background for toasts
+@color-toast-text:           #ffffff;  // White text on dark background
+
+
+// Dark mode colors - Gmail-inspired dark theme
+@color-dark-background:     #202124;  // Main background (Gmail dark)
+@color-dark-surface:        #292a2d;  // Cards, elevated surfaces
+@color-dark-surface-hover:  #35363a;  // Hover states
+@color-dark-border:         #5f6368;  // Borders
+@color-dark-font:           #e8eaed;  // Primary text
+@color-dark-hint:           #9aa0a6;  // Secondary text
+@color-dark-accent:         #8ab4f8;  // Links, accent (softer blue)
+@color-dark-error:          #f28b82;  // Errors (softer red)
+@color-dark-success:        #81c995;  // Success (softer green)
+@color-dark-warning:        #fdd663;  // Warning (softer yellow)
+@color-dark-information:    @color-dark-accent;  // Info uses accent
+@color-dark-main:           @color-dark-error;   // Main action uses error red
+
+@color-dark-list-selected:              @color-dark-font;
+@color-dark-list-selected-background:   @color-dark-surface-hover;
+@color-dark-list-badge:                 lighten(@color-dark-font, 10%);
+@color-dark-list-badge-background:      @color-dark-border;
+@color-dark-list-deleted:               #80868b;  // Muted gray
+@color-dark-list-droptarget-background: fadeout(@color-dark-accent, 70%);
+@color-dark-list-border:                #3c4043;  // Subtle border
+
+@color-dark-input:                      @color-dark-font;
+@color-dark-input-border:               @color-dark-border;
+@color-dark-input-background:           @color-dark-surface;
+@color-dark-input-focus:                #ffffff;
+@color-dark-input-border-focus:         @color-dark-accent;
+@color-dark-input-background-focus:     lighten(@color-dark-surface, 3%);
+@color-dark-input-addon-background:     @color-dark-surface-hover;
+@color-dark-input-addon-background-focus: lighten(@color-dark-surface-hover, 5%);
+@color-dark-checkbox:                   @color-dark-border;
+@color-dark-checkbox-checked:           @color-dark-accent;
+
+@color-dark-btn:                        @color-dark-font;
+@color-dark-btn-primary-background:     @color-dark-accent;
+@color-dark-btn-secondary-background:   @color-dark-surface-hover;
+@color-dark-btn-danger-background:      @color-dark-error;
+
+@color-dark-dialog-overlay-background:  fade(black, 70%);
+
+@color-dark-popover-background:         @color-dark-surface;
+@color-dark-popover-border:             @color-dark-border;
+
+@color-dark-message-information:        @color-dark-information;
+@color-dark-message-success:            @color-dark-success;
+@color-dark-message-warning:            @color-dark-warning;
+@color-dark-message-error:              @color-dark-error;
+@color-dark-message-loading:            @color-dark-surface-hover;
+
+@color-dark-scrollbar-thumb:            @color-dark-border;
+@color-dark-scrollbar-track:            @color-dark-surface;
+
+@color-dark-blockquote-0:               @color-dark-accent;
+@color-dark-blockquote-1:               @color-dark-success;
+@color-dark-blockquote-2:               @color-dark-warning;
+@color-dark-blockquote-0-border:        @color-dark-blockquote-0;
+@color-dark-blockquote-1-border:        @color-dark-blockquote-1;
+@color-dark-blockquote-2-border:        @color-dark-blockquote-2;

@@ -1,0 +1,458 @@
+/**
+ * Roundcube Webmail styles for the Elastic skin
+ *
+ * Copyright (c) The Roundcube Dev Team
+ *
+ * The contents are subject to the Creative Commons Attribution-ShareAlike
+ * License. It is allowed to copy, distribute, transmit and to adapt the work
+ * by keeping credits to the original authors in the README.md file.
+ * See http://creativecommons.org/licenses/by-sa/3.0/ for details.
+ */
+
+/*** Buttons ***/
+
+
+.button.disabled {
+    opacity: .5;
+}
+
+a.button {
+    text-decoration: none !important;
+}
+
+
+/* font-icons */
+
+a.button.icon,
+button.btn {
+    &:before {
+        &:extend(.font-icon-class);
+    }
+    &.sidebar-menu:before,
+    &.toolbar-menu-button:before,
+    &.toolbar-list-button:before {
+        content: @fa-var-ellipsis-v;
+        width: 1em;
+    }
+    &.task-menu-button:before {
+        content: @fa-var-bars;
+    }
+    &.back-sidebar-button:before,
+    &.back-content-button:before,
+    &.back-list-button:before {
+        content: @fa-var-chevron-left;
+    }
+    &.refresh:before {
+        content: @fa-var-sync;
+    }
+    &.generate:before,
+    &.yes:before,
+    &.submit:before,
+    &.continue:before,
+    &.save:before {
+        content: @fa-var-check;
+    }
+    &.create:before {
+        content: @fa-var-plus-square;
+    }
+    &.edit:before {
+        content: @fa-var-pencil-alt;
+    }
+    &.qrcode:before {
+        content: @fa-var-qrcode;
+    }
+    &.search:before {
+        content: @fa-var-search;
+    }
+    &.filter:before {
+        content: @fa-var-filter;
+        font-size: 1.2em; // this icon is too-big in FA5
+    }
+    &.import:before {
+        content: @fa-var-upload;
+    }
+    &.export:before {
+        content: @fa-var-download;
+    }
+    &.discard:before,
+    &.delete:before {
+        .font-icon-regular(@fa-var-trash-alt);
+    }
+    &.next:before {
+        content: @fa-var-arrow-right;
+    }
+    &.restore:before {
+        content: @fa-var-undo;
+    }
+    &.send:before,
+    &.bounce:before {
+        content: @fa-var-paper-plane;
+    }
+    &.attach:before {
+        content: @fa-var-paperclip;
+    }
+    &.attach.vcard:before {
+        content: @fa-var-user;
+    }
+    &.no:before,
+    &.close:before,
+    &.cancel:before {
+        content: @fa-var-times;
+    }
+    &.back:before {
+        content: @fa-var-chevron-left;
+    }
+    &.remove:before {
+        content: @fa-var-times;
+    }
+    &.unlock:before {
+        content: @fa-var-unlock;
+    }
+    &.help:before {
+        .font-icon-regular(@fa-var-life-ring);
+    }
+    &.folders:before {
+        content: @fa-var-folder-open;
+    }
+    &.options:before {
+        content: @fa-var-sliders-h;
+    }
+    &.tools:before,
+    &.settings:before {
+        content: @fa-var-cog;
+    }
+    &.properties:before {
+        content: @fa-var-info-circle;
+    }
+    &.selection:before {
+        .font-icon-regular(@fa-var-check-square);
+    }
+    &.insert.recipient:before {
+        content: @fa-var-user-plus;
+    }
+    &.encrypt:before {
+        content: @fa-var-lock;
+    }
+    &.sign:before {
+        content: @fa-var-signature;
+    }
+    &.sso:before {
+        content: @fa-var-sign-in-alt;
+    }
+    &.extwin:before {
+        content: @fa-var-external-link-square-alt;
+    }
+}
+
+a.btn,
+button.btn {
+    &:before {
+        display: inline !important;
+        float: none !important;
+        vertical-align: middle;
+        margin-right: .4rem !important; // !important needed for a.btn
+    }
+
+    &.oauth.google:before,
+    &.oauth.outlook:before {
+        content: " ";
+        display: inline-block !important;
+        height: 1.5rem;
+        width: 1.5rem;
+        margin-right: .8rem !important;
+        background-size: 100% auto;
+    }
+
+    &.oauth.google:before {
+        background: url('../images/google-icon.svg') top left no-repeat;
+    }
+
+    &.oauth.outlook:before {
+        background: url('../images/microsoft-icon.svg') top left no-repeat;
+    }
+}
+
+a.button.icon {
+    &.dropdown:before {
+        content: @fa-var-caret-down;
+        font-size: 1em;
+    }
+    & > span.inner {
+        display: none;
+    }
+}
+
+html.touch {
+    .btn:focus {
+        box-shadow: none !important;
+    }
+}
+
+@floating-action-button-size: 4rem;
+
+.floating-action-buttons {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    .footer:not(:empty) + & {
+        bottom: @layout-footer-small-height;
+    }
+
+    a.button {
+        display: block;
+        float: left;
+        width: @floating-action-button-size;
+        height: @floating-action-button-size;
+        border-radius: 50%;
+        background: @color-main;
+        color: white;
+        opacity: .95;
+        box-shadow: 0 0 5px 5px lighten(@color-main, 35%);
+        margin: 0 1rem 1rem 0;
+
+        &:before {
+            &:extend(.font-icon-class);
+            content: @fa-var-plus;
+            width: @floating-action-button-size;
+            height: @floating-action-button-size;
+            line-height: @floating-action-button-size;
+        }
+
+        &.compose {
+            &:before {
+                content: @fa-var-pen;
+            }
+        }
+
+        .inner {
+            display: none;
+        }
+    }
+    
+    // Gmail-style FAB on mobile
+    @media screen and (max-width: @screen-width-xs) {
+        a.button.compose {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;  // Rounded square like Gmail
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            opacity: 1;
+            
+            &:before {
+                color: @color-main;
+                font-size: 24px;
+                width: 56px;
+                height: 56px;
+                line-height: 56px;
+            }
+            
+            &:hover,
+            &:active {
+                box-shadow: 0 2px 4px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.2);
+            }
+        }
+    }
+}
+
+/*** Bootstrap button style overrides ***/
+
+.btn {
+    &:focus {
+        box-shadow: 0 0 0 .2rem fade(@color-btn-primary-background, 25%);
+    }
+}
+
+.btn-link {
+    color: @color-link;
+}
+
+.btn-secondary {
+    color: @color-btn-secondary;
+    background: @color-btn-secondary-background;
+    border-color: #dadce0;  // Gmail border
+    border-radius: .375rem;  // Slightly more rounded like Gmail
+
+    &:focus {
+        background: #f8f9fa;  // Gmail hover gray
+        border-color: #dadce0;
+        box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);  // Gmail shadow
+    }
+
+    &:hover {
+        background: #f8f9fa;  // Gmail hover
+        border-color: #dadce0;
+        box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+    }
+
+    &.disabled,
+    &:disabled {
+        background: @color-btn-secondary-background;
+        border-color: #dadce0;
+        opacity: .6;
+    }
+
+    &:not(:disabled):not(.disabled) {
+        &:active,
+        &.active {
+            background: #e8eaed;  // Gmail pressed
+            border-color: #dadce0;
+
+            &:focus {
+                box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+            }
+        }
+    }
+}
+
+.btn-primary {
+    color: @color-btn-primary;
+    background: @color-btn-primary-background;
+    border-color: @color-btn-primary-background;
+    border-radius: .375rem;  // Gmail rounded
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);  // Gmail shadow
+    font-weight: 500;  // Gmail medium weight
+
+    &:focus {
+        background: darken(@color-btn-primary-background, 5%);
+        border-color: darken(@color-btn-primary-background, 5%);
+        box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);  // Elevated shadow
+    }
+
+    &:hover {
+        background: darken(@color-btn-primary-background, 8%);
+        border-color: darken(@color-btn-primary-background, 8%);
+        box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+    }
+
+    &.disabled,
+    &:disabled {
+        background: @color-btn-primary-background;
+        border-color: @color-btn-primary-background;
+        opacity: .6;
+    }
+
+    &:not(:disabled):not(.disabled) {
+        &:active,
+        &.active {
+            background: darken(@color-btn-primary-background, 12%);
+            border-color: darken(@color-btn-primary-background, 12%);
+
+            &:focus {
+                box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+            }
+        }
+    }
+}
+
+.btn-danger {
+    color: @color-btn-danger;
+    background: @color-btn-danger-background;
+    border-color: @color-btn-danger-background;
+    border-radius: .25rem;
+
+    &:focus {
+        background: darken(@color-btn-danger-background, 5%);
+        border-color: darken(@color-btn-danger-background, 7%);
+        box-shadow: 0 0 0 .2rem fade(@color-btn-danger-background, 40%);
+    }
+
+    &:hover {
+        background: darken(@color-btn-danger-background, 5%);
+        border-color: darken(@color-btn-danger-background, 7%);
+    }
+
+    &.disabled,
+    &:disabled {
+        background: @color-btn-danger-background;
+        border-color: @color-btn-danger-background;
+    }
+
+    &:not(:disabled):not(.disabled) {
+        &:active,
+        &.active {
+            background: darken(@color-btn-danger-background, 10%);
+            border-color: darken(@color-btn-danger-background, 12%);
+
+            &:focus {
+                box-shadow: 0 0 0 .2rem fade(@color-btn-danger-background, 45%);
+            }
+        }
+    }
+}
+
+/*** Gmail-style Send Button ***/
+
+// Style the send button in compose form with Gmail's pill-shaped design
+.btn.send,
+button.send,
+a.button.send {
+    background: @color-compose-send-btn;
+    color: #ffffff;
+    border-color: @color-compose-send-btn;
+    border-radius: 18px;  // Pill shape
+    height: 36px;
+    padding: 0 24px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+    
+    &:hover {
+        background: @color-compose-send-btn-hover;
+        border-color: @color-compose-send-btn-hover;
+        box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+    }
+    
+    &:focus {
+        background: @color-compose-send-btn-hover;
+        border-color: @color-compose-send-btn-hover;
+        box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+    }
+    
+    &:active,
+    &.active {
+        background: darken(@color-compose-send-btn, 10%);
+        border-color: darken(@color-compose-send-btn, 10%);
+    }
+    
+    &.disabled,
+    &:disabled {
+        background: fadeout(@color-compose-send-btn, @color-compose-send-btn-disabled-opacity);
+        border-color: fadeout(@color-compose-send-btn, @color-compose-send-btn-disabled-opacity);
+        opacity: .6;
+    }
+}
+
+/*** Gmail-style Reply/Forward Pill Buttons ***/
+
+// Style reply and forward buttons with Gmail pill design
+.button.reply,
+.button.forward,
+.button.reply-all,
+a.reply,
+a.forward,
+a.reply-all,
+button.reply,
+button.forward,
+button.reply-all {
+    border: 1px solid @color-input-border;
+    border-radius: 18px;
+    padding: 8px 16px;
+    background: @color-btn-secondary-background;
+    color: @color-btn-secondary;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    
+    &:hover {
+        background-color: @color-black-shade-bg;
+        border-color: @color-input-border;
+    }
+    
+    &:before {
+        margin-right: 8px;
+        font-size: 16px;
+    }
+}

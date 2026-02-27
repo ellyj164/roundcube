@@ -1,0 +1,64 @@
+/**
+ * Roundcube Webmail styles for the Elastic skin
+ *
+ * Copyright (c) The Roundcube Dev Team
+ *
+ * The contents are subject to the Creative Commons Attribution-ShareAlike
+ * License. It is allowed to copy, distribute, transmit and to adapt the work
+ * by keeping credits to the original authors in the README.md file.
+ * See http://creativecommons.org/licenses/by-sa/3.0/ for details.
+ */
+
+@import (reference) "fontawesome";
+@import (reference) "colors";
+
+@dark-mode-enabled:     true; // on change also have to change dark_mode_support in meta.json
+
+@screen-width-large:    1200px;
+@screen-width-medium:   1024px;
+@screen-width-small:    768px;
+@screen-width-xs:       480px;
+@screen-width-mini:     320px;
+@screen-width-touch:    @screen-width-medium;
+@screen-width-bs-phone: 576px;
+
+@page-font-size:        14px;  // Gmail uses 14px base font
+@page-min-width:        240px;
+
+// Note: we'll set some values in pixels instead of rem to eliminate
+//       Firefox sub-pixel rendering bug(s)
+
+// Gmail-specific dimensions
+@layout-menu-width:                     48px;  // Slim icon bar (Gmail-style)
+@layout-menu-width-sm:                  48px;
+@layout-header-height:                  48px;  // Compact header
+@layout-footer-height:                  @layout-header-height;
+@layout-footer-small-height:            floor(2.5 * @page-font-size);
+@layout-header-font-size:               1rem;
+@layout-searchbar-height:               46px;  // Gmail-standard search bar height (46-48px range)
+
+@layout-touch-header-height:            @layout-header-height;
+@layout-touch-header-font-size:         floor(1.2 * @page-font-size);
+@layout-touch-menu-record-height:       floor(3.4 * @page-font-size);
+@layout-touch-menu-record-font-size:    floor(1.2 * @page-font-size);
+@layout-touch-icon-width:               2.2em;
+
+@layout-mobile-menu-width:              (@screen-width-mini * .85);
+
+@layout-contact-icon-width:             112px;
+@layout-contact-icon-height:            135px;
+
+@listing-line-height:                   40px;  // Gmail message row height
+@listing-touch-line-height:             floor(3.6 * @page-font-size);  // Even more space on touch
+@listing-treetoggle-width:              1.5em;
+
+@mail-header-photo-height:              4rem;
+
+// Scrollbars
+@scrollbar-width:       thin; // 'auto' or 'thin' or 'unset'
+
+// Additional icons
+@icon-resize-corner:    data-uri("image/svg+xml;charset=utf-8", "../images/corner-handle.svg"); // size: 16x16
+@icon-file-drop:        data-uri("image/svg+xml;charset=utf-8", "../images/download.svg");
+
+@import (reference, optional) "_variables";
