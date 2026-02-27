@@ -21,8 +21,6 @@
      * Initialize all FEZA UI enhancements
      */
     init: function () {
-      // Debug: verify message rows are present in the DOM (> 0 = CSS issue; 0 = JS/server issue)
-      console.log(document.querySelectorAll('#messagelist tr').length);
       this.initMessageClickHandlers();
       this.initPreventAutoCompose();
       this.initEmptyState();
@@ -41,6 +39,9 @@
       this.initExpandLongMessages();
       this.initPriorityIndicators();
       this.initSwipeGestures();
+      this.initSettingsNav();
+      this.initDashboard();
+      this.initSwipeRowHints();
     },
 
     /**
@@ -945,6 +946,292 @@
     hideSnoozePopup: function () {
       var popup = document.getElementById('feza-snooze-popup');
       if (popup) popup.parentNode.removeChild(popup);
+    },
+
+    /**
+     * Ensure Settings link is present in the task menu.
+     * Roundcube renders this natively; we only inject a fallback
+     * if the native link is missing (e.g. hidden by CSS or not rendered).
+     */
+    initSettingsNav: function () {
+      var taskmenu = document.getElementById('taskmenu');
+      if (!taskmenu) return;
+
+      /* Check if a settings link already exists */
+      var existing = taskmenu.querySelector('a[href*="_task=settings"], .button.settings');
+      if (existing) {
+        /* Ensure it is visible */
+        existing.style.display = '';
+        existing.style.visibility = 'visible';
+        existing.style.opacity = '1';
+        return;
+      }
+
+      /* Inject fallback Settings link */
+      var a = document.createElement('a');
+      a.href = '?_task=settings';
+      a.className = 'button settings feza-settings-link';
+      a.setAttribute('aria-label', 'Settings');
+      a.title = 'Settings';
+      a.innerHTML = '<span class="inner">&#9881; Settings</span>';
+      taskmenu.appendChild(a);
+    },
+
+    /**
+     * Inject the FEZA enterprise home dashboard into the content pane
+     * when no message is selected (i.e. the preview iframe is empty).
+     */
+    initDashboard: function () {
+      /* Only inject on mail task, not compose/settings etc. */
+      if (!document.body.classList.contains('task-mail')) return;
+
+      var content = document.getElementById('layout-content');
+      if (!content) return;
+
+      /* Watch for when no message is loaded (preview iframe is empty / blank) */
+      var self = this;
+      function checkAndInject() {
+        var frame = document.getElementById('messagecontframe');
+        var existing = document.getElementById('feza-dashboard');
+
+        /* Remove dashboard if a message is being shown */
+        if (frame && frame.contentDocument &&
+            frame.contentDocument.body &&
+            frame.contentDocument.body.innerHTML.trim() !== '') {
+          if (existing) existing.style.display = 'none';
+          return;
+        }
+
+        if (existing) {
+          existing.style.display = 'flex';
+          self._refreshDashboardStats();
+          return;
+        }
+
+        self._buildDashboard(content);
+      }
+
+      /* Poll lightly; also hook on message list mutations */
+      var list = document.getElementById('messagelist');
+      if (list) {
+        new MutationObserver(checkAndInject).observe(list, { childList: true, subtree: true });
+      }
+      checkAndInject();
+    },
+
+    /** @private — build dashboard DOM */
+    _buildDashboard: function (container) {
+      var dash = document.createElement('div');
+      dash.id = 'feza-dashboard';
+      dash.setAttribute('role', 'main');
+      dash.setAttribute('aria-label', 'Enterprise Dashboard');
+
+      /* Determine user identity from page */
+      var userEl = document.querySelector('#userinfo .username, .rcube-username, #username');
+      var userName = userEl ? userEl.textContent.trim() : 'Welcome';
+      var firstName = userName.split(/[@\s]/)[0];
+      /* Capitalise first letter */
+      firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+
+      /* Unread count from DOM badge */
+      var inboxBadge = document.querySelector('#mailboxlist li.inbox .unread, #mailboxlist li[data-id="INBOX"] .unread');
+      var unreadCount = inboxBadge ? parseInt(inboxBadge.textContent, 10) || 0 : 0;
+
+      /* Storage quota from existing quotadisplay */
+      var quotaEl = document.getElementById('quotadisplay');
+      var quotaText = quotaEl ? quotaEl.textContent.trim() : '';
+
+      /* Hour-based greeting */
+      var hour = new Date().getHours();
+      var greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+
+      dash.innerHTML =
+        '<div class="feza-dash-header">' +
+          '<div class="feza-dash-greeting">' + greeting + ', <strong>' + FEZA._escapeHtml(firstName) + '</strong> &#128075;</div>' +
+          '<div class="feza-dash-email">' + FEZA._escapeHtml(userName) + '</div>' +
+        '</div>' +
+        '<div class="feza-dash-cards">' +
+          '<div class="feza-dash-card feza-dash-inbox" id="feza-dash-inbox">' +
+            '<div class="feza-dash-card-icon">&#128229;</div>' +
+            '<div class="feza-dash-card-body">' +
+              '<div class="feza-dash-card-title">Inbox</div>' +
+              '<div class="feza-dash-card-value" id="feza-dash-unread">' + unreadCount + ' unread</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="feza-dash-card feza-dash-compose-card" id="feza-dash-compose">' +
+            '<div class="feza-dash-card-icon">&#9998;</div>' +
+            '<div class="feza-dash-card-body">' +
+              '<div class="feza-dash-card-title">New Message</div>' +
+              '<div class="feza-dash-card-value">Compose</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="feza-dash-card feza-dash-settings-card" id="feza-dash-settings">' +
+            '<div class="feza-dash-card-icon">&#9881;</div>' +
+            '<div class="feza-dash-card-body">' +
+              '<div class="feza-dash-card-title">Settings</div>' +
+              '<div class="feza-dash-card-value">Manage account</div>' +
+            '</div>' +
+          '</div>' +
+          (quotaText ? '<div class="feza-dash-card feza-dash-storage">' +
+            '<div class="feza-dash-card-icon">&#128190;</div>' +
+            '<div class="feza-dash-card-body">' +
+              '<div class="feza-dash-card-title">Storage</div>' +
+              '<div class="feza-dash-card-value" id="feza-dash-quota">' + FEZA._escapeHtml(quotaText) + '</div>' +
+            '</div>' +
+          '</div>' : '') +
+        '</div>' +
+        '<div class="feza-dash-recent">' +
+          '<div class="feza-dash-section-title">&#128338; Recent Messages</div>' +
+          '<ul id="feza-dash-recent-list" class="feza-dash-recent-list"></ul>' +
+        '</div>';
+
+      container.appendChild(dash);
+
+      /* Wire compose card */
+      var composeCard = document.getElementById('feza-dash-compose');
+      if (composeCard) {
+        composeCard.style.cursor = 'pointer';
+        composeCard.addEventListener('click', function () {
+          if (window.rcmail && typeof rcmail.command === 'function') {
+            rcmail.command('compose', '', composeCard);
+          }
+        });
+      }
+
+      /* Wire settings card */
+      var settingsCard = document.getElementById('feza-dash-settings');
+      if (settingsCard) {
+        settingsCard.style.cursor = 'pointer';
+        settingsCard.addEventListener('click', function () {
+          window.location.href = '?_task=settings';
+        });
+      }
+
+      /* Wire inbox card */
+      var inboxCard = document.getElementById('feza-dash-inbox');
+      if (inboxCard) {
+        inboxCard.style.cursor = 'pointer';
+        inboxCard.addEventListener('click', function () {
+          if (window.rcmail && typeof rcmail.command === 'function') {
+            rcmail.command('list', 'INBOX', inboxCard);
+          }
+        });
+      }
+
+      this._refreshDashboardStats();
+    },
+
+    /** @private — refresh dynamic stats (unread, recent messages, quota) */
+    _refreshDashboardStats: function () {
+      /* Unread */
+      var inboxBadge = document.querySelector('#mailboxlist li.inbox .unread, #mailboxlist li[data-id="INBOX"] .unread');
+      var unreadCount = inboxBadge ? parseInt(inboxBadge.textContent, 10) || 0 : 0;
+      var unreadEl = document.getElementById('feza-dash-unread');
+      if (unreadEl) unreadEl.textContent = unreadCount + ' unread';
+
+      /* Quota */
+      var quotaEl = document.getElementById('quotadisplay');
+      var dashQuota = document.getElementById('feza-dash-quota');
+      if (dashQuota && quotaEl) dashQuota.textContent = quotaEl.textContent.trim();
+
+      /* Recent messages: pull last 5 rows from messagelist */
+      var recentList = document.getElementById('feza-dash-recent-list');
+      if (!recentList) return;
+      var rows = document.querySelectorAll('#messagelist tbody tr[id]');
+      recentList.innerHTML = '';
+      var max = Math.min(rows.length, 5);
+      for (var i = 0; i < max; i++) {
+        var row = rows[i];
+        var subjectEl = row.querySelector('td.subject span, td.subject');
+        var fromEl    = row.querySelector('td.from span, td.from');
+        var dateEl    = row.querySelector('td.date span, td.date');
+        var subject   = subjectEl ? subjectEl.textContent.trim() : '(no subject)';
+        var from      = fromEl    ? fromEl.textContent.trim()    : '';
+        var date      = dateEl    ? dateEl.textContent.trim()    : '';
+        var isUnread  = row.classList.contains('unread');
+
+        var li = document.createElement('li');
+        li.className = 'feza-dash-recent-item' + (isUnread ? ' feza-dash-recent-unread' : '');
+        li.style.cursor = 'pointer';
+        li.innerHTML =
+          '<span class="feza-dash-recent-subject">' + FEZA._escapeHtml(subject) + '</span>' +
+          '<span class="feza-dash-recent-meta">' + FEZA._escapeHtml(from) + ' &bull; ' + FEZA._escapeHtml(date) + '</span>';
+        (function(r) {
+          li.addEventListener('click', function () {
+            if (window.rcmail && typeof rcmail.command === 'function') {
+              rcmail.command('show', r.id.replace(/^rcmrow/, ''), r);
+            }
+          });
+        })(row);
+        recentList.appendChild(li);
+      }
+      if (max === 0) {
+        var empty = document.createElement('li');
+        empty.className = 'feza-dash-recent-empty';
+        empty.textContent = 'No recent messages.';
+        recentList.appendChild(empty);
+      }
+    },
+
+    /** @private — XSS-safe string escaping */
+    _escapeHtml: function (str) {
+      var d = document.createElement('div');
+      d.appendChild(document.createTextNode(str));
+      return d.innerHTML;
+    },
+
+    /* Add swipe hint class to message rows on touch devices */
+    initSwipeRowHints: function () {
+      if (window.innerWidth > 768) return;
+      var list = document.getElementById('messagelist');
+      if (!list) return;
+      var tbody = list.querySelector('tbody');
+      if (!tbody) return;
+
+      var startX, startY, activeRow;
+
+      tbody.addEventListener('touchstart', function (e) {
+        activeRow = e.target.closest('tr[id]');
+        if (!activeRow) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+
+      tbody.addEventListener('touchmove', function (e) {
+        if (!activeRow) return;
+        var dx = e.touches[0].clientX - startX;
+        var dy = e.touches[0].clientY - startY;
+        if (Math.abs(dy) > Math.abs(dx)) return;
+        if (dx < -30) {
+          activeRow.style.transform = 'translateX(' + Math.max(dx, -80) + 'px)';
+          activeRow.style.transition = 'none';
+          activeRow.style.background = '#fef2f2';
+        } else if (dx > 30) {
+          activeRow.style.transform = 'translateX(' + Math.min(dx, 80) + 'px)';
+          activeRow.style.transition = 'none';
+          activeRow.style.background = '#f0fdf4';
+        }
+      }, { passive: true });
+
+      tbody.addEventListener('touchend', function (e) {
+        if (!activeRow) return;
+        var dx = e.changedTouches[0].clientX - startX;
+        activeRow.style.transition = 'transform 0.25s ease, background 0.25s ease';
+        activeRow.style.transform = '';
+        activeRow.style.background = '';
+        if (dx < -60) {
+          /* Swipe left — archive */
+          if (window.rcmail && typeof rcmail.command === 'function') {
+            rcmail.command('archive', '', activeRow);
+          }
+        } else if (dx > 60) {
+          /* Swipe right — mark as read */
+          if (window.rcmail && typeof rcmail.command === 'function') {
+            rcmail.command('mark', 'read', activeRow);
+          }
+        }
+        activeRow = null;
+      }, { passive: true });
     }
 
   };
