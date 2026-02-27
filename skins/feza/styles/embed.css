@@ -1,0 +1,29 @@
+/**
+ * FEZA Enterprise Mail - Embedded Email Styles
+ */
+body {
+  font-family: 'Segoe UI', Inter, Arial, sans-serif;
+  font-size: 14px;
+  color: #1a1a2e;
+  line-height: 1.6;
+}
+
+blockquote {
+  border-left: 3px solid #0a4da3;
+  margin: 0;
+  padding: 0 0.5em;
+  color: #6c757d;
+}
+
+pre {
+  font-family: 'Courier New', monospace;
+  background-color: #f4f7fb;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 8px;
+  overflow-x: auto;
+}
+
+a {
+  color: #0a4da3;
+}
