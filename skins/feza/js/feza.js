@@ -21,6 +21,8 @@
      * Initialize all FEZA UI enhancements
      */
     init: function () {
+      // Debug: verify message rows are present in the DOM (> 0 = CSS issue; 0 = JS/server issue)
+      console.log(document.querySelectorAll('#messagelist tr').length);
       this.initMessageClickHandlers();
       this.initPreventAutoCompose();
       this.initEmptyState();

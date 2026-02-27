@@ -281,8 +281,43 @@ html, body {
 /* =============================================
    MESSAGE LIST (CARD-STYLE ROWS)
    ============================================= */
+
+/* ===========================
+   ROUNDCUBE MESSAGE VISIBILITY
+=========================== */
+
+#messagelistcontainer,
+#messagelist {
+  height: 100% !important;
+  min-height: 400px;
+}
+
+#messagelist,
+#messagelist table,
+#messagelist tbody,
+#messagelist tr,
+#messagelist td {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+#messagelist tr {
+  display: table-row !important;
+  height: auto !important;
+}
+
+#messagelist td {
+  display: table-cell !important;
+  color: var(--feza-text) !important;
+  background: var(--feza-white) !important;
+}
+
 #messagelist {
   background-color: var(--feza-white);
+  width: 100%;
+  overflow: auto;
+  z-index: 10;
+  position: relative;
 }
 
 #messagelist thead {
